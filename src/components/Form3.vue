@@ -45,8 +45,6 @@
 
       <button type="submit">go to next</button>
     </form>
-
-    <pre>{{ values }}</pre>
   </div>
 </template>
 

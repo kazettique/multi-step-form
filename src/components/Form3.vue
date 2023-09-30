@@ -43,24 +43,28 @@
         <div v-if="errors.cvc" class="error">{{ errors.cvc }}</div>
       </div>
 
-      <button type="submit" class="button">next step</button>
+      <div class="buttonGroup">
+        <button class="button" type="button" @click="$emit('prev')">back</button>
+        <button type="submit" class="button">next step</button>
+      </div>
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { FormModel3 } from '@/types'
+import type { Form3Model } from '@/types'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm, useField } from 'vee-validate'
 import z from 'zod'
 
 interface Props {
   class?: string
+  initialValues: Form3Model
 }
 
 interface Emits {
   (event: 'prev'): void
-  (event: 'submit', values: FormModel3): void
+  (event: 'next', values: Form3Model): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -78,10 +82,8 @@ const validationSchema = toTypedSchema(
   })
 )
 
-const initialValues: FormModel3 = { cardNo: '', expireMonth: '1', expireYear: '2023', cvc: '' }
-
-const { handleSubmit, errors, values } = useForm<FormModel3>({
-  initialValues,
+const { handleSubmit, errors } = useForm<Form3Model>({
+  initialValues: props.initialValues,
   validationSchema
 })
 
@@ -90,7 +92,7 @@ const { value: expireMonth } = useField<string>('expireMonth')
 const { value: expireYear } = useField<string>('expireYear')
 const { value: cvc } = useField<number>('cvc')
 
-const onSubmit = handleSubmit((values) => emits('submit', values))
+const onSubmit = handleSubmit((values) => emits('next', values))
 </script>
 
 <style scoped lang="scss"></style>

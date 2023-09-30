@@ -13,8 +13,10 @@
   },
   "dependencies": {
     "@vee-validate/zod": "^4.11.7",
+    "@xstate/vue": "^2.0.0",
     "vee-validate": "^4.11.7",
     "vue": "^3.3.4",
+    "xstate": "^4.38.2",
     "zod": "^3.22.2"
   },
   "devDependencies": {

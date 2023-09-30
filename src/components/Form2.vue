@@ -20,24 +20,28 @@
         <div v-if="errors.email" class="error">{{ errors.email }}</div>
       </div>
 
-      <button type="submit" class="button">next step</button>
+      <div class="buttonGroup">
+        <button class="button" type="button" @click="$emit('prev')">back</button>
+        <button type="submit" class="button">next step</button>
+      </div>
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { FormModel2 } from '@/types'
+import type { Form2Model } from '@/types'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm, useField } from 'vee-validate'
 import z from 'zod'
 
 interface Props {
   class?: string
+  initialValues: Form2Model
 }
 
 interface Emits {
   (event: 'prev'): void
-  (event: 'next', values: FormModel2): void
+  (event: 'next', values: Form2Model): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -54,10 +58,8 @@ const validationSchema = toTypedSchema(
   })
 )
 
-const initialValues: FormModel2 = { name: '', age: 0, email: '' }
-
-const { handleSubmit, errors, values } = useForm<FormModel2>({
-  initialValues,
+const { handleSubmit, errors } = useForm<Form2Model>({
+  initialValues: props.initialValues,
   validationSchema
 })
 

@@ -1,13 +1,13 @@
-export interface FormModel1 {
+export interface Form1Model {
   channels: number[]
 }
 
-export interface FormModel2 {
+export interface Form2Model {
   name: string
   age: number
   email: string
 }
-export interface FormModel3 {
+export interface Form3Model {
   cardNo: string
   expireMonth: string
   expireYear: string

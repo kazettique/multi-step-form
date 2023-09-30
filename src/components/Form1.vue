@@ -24,23 +24,26 @@
 
       <div v-if="errors.channels" class="error">{{ errors.channels }}</div>
 
-      <button class="button" type="submit">next step</button>
+      <div>
+        <button class="button" type="submit">next step</button>
+      </div>
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { FormModel1 } from '@/types'
+import type { Form1Model } from '@/types'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm, useField } from 'vee-validate'
 import z from 'zod'
 
 interface Props {
   class?: string
+  initialValues: Form1Model
 }
 
 interface Emits {
-  (event: 'next', values: FormModel1): void
+  (event: 'next', values: Form1Model): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -55,10 +58,8 @@ const validationSchema = toTypedSchema(
   })
 )
 
-const initialValues: FormModel1 = { channels: [] }
-
-const { handleSubmit, errors, values } = useForm<FormModel1>({
-  initialValues,
+const { handleSubmit, errors, values } = useForm<Form1Model>({
+  initialValues: props.initialValues,
   validationSchema
 })
 

@@ -30,7 +30,7 @@ import MultiStepForm from './components/MultiStepForm.vue'
 }
 
 .form {
-  @apply p-10 flex flex-col justify-center gap-y-4;
+  @apply mt-6 flex flex-col justify-center gap-y-4;
 }
 
 .formTitle {

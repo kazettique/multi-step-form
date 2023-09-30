@@ -1,24 +1,26 @@
 <template>
   <div :class="`${props.class}`">
-    <h2>Stage 2</h2>
-    <form @submit="onSubmit">
+    <h2 class="formTitle">Enter you personal information</h2>
+    <form class="form" @submit="onSubmit">
       <div>
-        <input type="checkbox" id="discovery" :value="1" v-model="channels" />
-        <label for="discovery">Discovery</label>
-
-        <input type="checkbox" id="nationGeographic" :value="2" v-model="channels" />
-        <label for="nationGeographic">Nation Geographic</label>
-
-        <input type="checkbox" id="bbc" :value="3" v-model="channels" />
-        <label for="bbc">BBC</label>
-
-        <input type="checkbox" id="cnn" :value="4" v-model="channels" />
-        <label for="cnn">CNN</label>
+        <label class="label">Your Name:</label>
+        <input name="name" v-model="name" />
+        <div v-if="errors.name" class="error">{{ errors.name }}</div>
       </div>
 
-      <div v-if="errors.channels" style="color: red">{{ errors.channels }}</div>
+      <div>
+        <label class="label">Your Age:</label>
+        <input name="age" v-model="age" type="number" />
+        <div v-if="errors.age" class="error">{{ errors.age }}</div>
+      </div>
 
-      <button type="submit">go to next</button>
+      <div>
+        <label class="label">Your Email:</label>
+        <input name="email" v-model="email" />
+        <div v-if="errors.email" class="error">{{ errors.email }}</div>
+      </div>
+
+      <button type="submit" class="button">next step</button>
     </form>
   </div>
 </template>
@@ -34,7 +36,8 @@ interface Props {
 }
 
 interface Emits {
-  (event: 'submit', values: FormModel2): void
+  (event: 'prev'): void
+  (event: 'next', values: FormModel2): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -45,20 +48,24 @@ const emits = defineEmits<Emits>()
 
 const validationSchema = toTypedSchema(
   z.object({
-    channels: z.number().array().nonempty('Please choose at least one channel.')
+    name: z.string().min(1, 'Please enter your name'),
+    age: z.number().nonnegative().min(1, 'Please enter your age'),
+    email: z.string().email('Please enter right email format').min(1, 'Please enter your email')
   })
 )
 
-const initialValues: FormModel2 = { channels: [] }
+const initialValues: FormModel2 = { name: '', age: 0, email: '' }
 
 const { handleSubmit, errors, values } = useForm<FormModel2>({
   initialValues,
   validationSchema
 })
 
-const { value: channels } = useField<number[]>('channels')
+const { value: name } = useField<string>('name')
+const { value: age } = useField<number>('age')
+const { value: email } = useField<number>('email')
 
-const onSubmit = handleSubmit((values) => emits('submit', values))
+const onSubmit = handleSubmit((values) => emits('next', values))
 </script>
 
 <style scoped lang="scss"></style>

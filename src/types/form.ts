@@ -1,16 +1,15 @@
 export interface FormModel1 {
-  name: string;
-  age: number;
-  email: string;
+  channels: number[]
 }
 
 export interface FormModel2 {
-  channels: number[];
+  name: string
+  age: number
+  email: string
 }
-
-export interface FormModel3{
-  cardNo: string;
-  expireMonth: string;
-  expireYear: string;
-  cvc: string;
+export interface FormModel3 {
+  cardNo: string
+  expireMonth: string
+  expireYear: string
+  cvc: string
 }

@@ -1,11 +1,13 @@
 <template>
   <div :class="`${props.class}`">
-    <h1 class="text-3xl">Multi Stage Form Example</h1>
+    <h1 class="title">Multi Stage Form Example</h1>
     <Form1 />
-    <hr>
+    <hr />
     <Form2 />
-    <hr>
+    <hr />
     <Form3 />
+
+    <FormResult />
   </div>
 </template>
 
@@ -13,6 +15,7 @@
 import Form1 from '@/components/Form1.vue'
 import Form2 from '@/components/Form2.vue'
 import Form3 from '@/components/Form3.vue'
+import FormResult from '@/components/FormResult.vue'
 
 interface Props {
   class?: string

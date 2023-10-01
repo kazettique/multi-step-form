@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MachineContext } from '@/multiFormMachine'
+import type { MachineContext } from '@/multStepFormMachine'
 import type { SubmitData } from '@/types';
 import { computed } from 'vue'
 
@@ -54,3 +54,4 @@ const emits = defineEmits<Emits>()
 </script>
 
 <style scoped lang="scss"></style>
+@/multStepFormMachine

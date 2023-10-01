@@ -56,8 +56,7 @@ import Form2 from '@/components/Form2.vue'
 import Form3 from '@/components/Form3.vue'
 import FormConfirm from '@/components/FormConfirm.vue'
 import FormComplete from '@/components/FormComplete.vue'
-import { multiStepFormMachine } from '@/multiFormMachine'
-import { sendTo } from 'xstate/lib/actions'
+import { multiStepFormMachine } from '@/multStepFormMachine'
 
 interface Props {
   class?: string
@@ -81,3 +80,4 @@ const handleRedirect = () => {
 </script>
 
 <style scoped lang="scss"></style>
+@/multStepFormMachine

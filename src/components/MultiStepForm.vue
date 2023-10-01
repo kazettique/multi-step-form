@@ -58,6 +58,7 @@ import FormConfirm from '@/components/FormConfirm.vue'
 import FormComplete from '@/components/FormComplete.vue'
 import { multiStepFormMachine } from '@/multiStepFormMachine'
 
+
 interface Props {
   class?: string
 }

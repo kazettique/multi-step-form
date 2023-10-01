@@ -31,9 +31,14 @@
           <FormConfirm
             v-if="state.matches('stepConfirm')"
             @prev="send('PREV')"
-            :is-loading="false"
+            @submit="send('SUBMIT')"
+            :is-submitting="state.matches('stepConfirm.submitting')"
+            :error="state.context.error"
             :machine-context="state.context"
+            :payload="state.context.payload"
           />
+
+          <FormComplete v-if="state.matches('complete')" @restart="send('RESTART')" />
         </div>
       </div>
       <div>
@@ -50,6 +55,7 @@ import Form1 from '@/components/Form1.vue'
 import Form2 from '@/components/Form2.vue'
 import Form3 from '@/components/Form3.vue'
 import FormConfirm from '@/components/FormConfirm.vue'
+import FormComplete from '@/components/FormComplete.vue'
 import { multiStepFormMachine } from '@/multiFormMachine'
 import { sendTo } from 'xstate/lib/actions'
 
@@ -65,7 +71,13 @@ const props = withDefaults(defineProps<Props>(), {
   class: ''
 })
 
+const emits = defineEmits<Emits>()
+
 const { state, send } = useMachine(multiStepFormMachine)
+
+const handleRedirect = () => {
+  console.log('redirect to somewhere')
+}
 </script>
 
 <style scoped lang="scss"></style>

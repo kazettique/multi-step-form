@@ -1,10 +1,16 @@
+import type { MachineContext } from './multiFormMachine'
 import type { Form1Model, Form2Model, Form3Model } from './types'
 
-export const form1InitialValues: Form1Model = { channels: [] }
+export const FORM_1_INITIAL_VALUES: Form1Model = { channels: [] }
 
-export const form2InitialValues: Form2Model = { name: '', age: 0, email: '' }
+export const FORM_2_INITIAL_VALUES: Form2Model = {
+  name: '',
+  age: 0,
+  email: '',
+  gender: 'male'
+}
 
-export const form3InitialValues: Form3Model = {
+export const FORM_3_INITIAL_VALUES: Form3Model = {
   cardNo: '',
   expireMonth: '1',
   expireYear: '2023',

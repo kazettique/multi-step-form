@@ -1,18 +1,30 @@
 import { assign, createMachine } from 'xstate'
-import type { Form1Model, Form2Model, Form3Model } from './types'
-import { form1InitialValues, form2InitialValues, form3InitialValues } from './default'
+import type { Form1Model, Form2Model, Form3Model, SubmitData } from './types'
+import { FORM_1_INITIAL_VALUES, FORM_2_INITIAL_VALUES, FORM_3_INITIAL_VALUES } from './default'
+import { sendFormData } from './utils'
 
 type MachineEvent =
   | { type: 'NEXT_TO_STEP_2'; formValues: Form1Model }
   | { type: 'NEXT_TO_STEP_3'; formValues: Form2Model }
   | { type: 'NEXT_TO_STEP_CONFIRM'; formValues: Form3Model }
   | { type: 'PREV' }
-  | { type: 'NEXT' }
+  | { type: 'SUBMIT' }
+  | { type: 'RESTART' }
 
 export type MachineContext = {
   form1Values: Form1Model
   form2Values: Form2Model
   form3Values: Form3Model
+  payload: SubmitData | null
+  error: string | null
+}
+
+const INITIAL_MACHINE_CONTEXT: MachineContext = {
+  form1Values: FORM_1_INITIAL_VALUES,
+  form2Values: FORM_2_INITIAL_VALUES,
+  form3Values: FORM_3_INITIAL_VALUES,
+  payload: null,
+  error: null
 }
 
 type MachineState =
@@ -20,12 +32,8 @@ type MachineState =
   | { context: MachineContext; value: 'step2' }
   | { context: MachineContext; value: 'step3' }
   | { context: MachineContext; value: 'stepConfirm' }
-
-const INITIAL_MACHINE_CONTEXT: MachineContext = {
-  form1Values: form1InitialValues,
-  form2Values: form2InitialValues,
-  form3Values: form3InitialValues
-}
+  | { context: MachineContext; value: 'stepConfirm.submitting' }
+  | { context: MachineContext; value: 'complete' }
 
 export const multiStepFormMachine = createMachine<MachineContext, MachineEvent, MachineState>(
   {
@@ -73,8 +81,15 @@ export const multiStepFormMachine = createMachine<MachineContext, MachineEvent, 
         initial: 'preSubmit',
         states: {
           preSubmit: {
+            entry: assign({
+              payload: (context, event) => ({
+                ...context.form1Values,
+                ...context.form2Values,
+                ...context.form3Values
+              })
+            }),
             on: {
-              NEXT: {
+              SUBMIT: {
                 target: 'submitting'
               }
             }
@@ -83,48 +98,52 @@ export const multiStepFormMachine = createMachine<MachineContext, MachineEvent, 
             invoke: {
               src: 'formSubmit',
               onDone: {
-                target: 'submitted'
+                target: '#multiStepForm.complete',
+                actions: 'resetContext'
               },
               onError: {
-                target: 'errored'
+                target: 'errored',
+                actions: assign({
+                  error: (context, event) => event.data.error
+                })
               }
             }
           },
-          submitted: {},
-          errored: {}
+          errored: {
+            on: {
+              SUBMIT: {
+                target: 'submitting'
+              }
+            }
+          }
         },
         on: {
           PREV: {
             target: 'step3'
           }
         }
-        // type: 'final'
+      },
+      complete: {
+        entry: 'resetContext',
+        on: {
+          RESTART: {
+            target: 'step1'
+          }
+        }
       }
-    },
-    invoke: {
-      src: 'formSubmit'
     }
   },
   {
     actions: {
-      sayHello: () => {
-        console.log('Hello')
-      },
-      sayGoodbye: () => {
-        console.log('Goodbye')
-      }
+      resetContext: assign(INITIAL_MACHINE_CONTEXT)
     },
     services: {
-      formSubmit: async (context) => {
-        console.log('submit: ', context)
-
-        const asyncData = await new Promise((resolve) =>
-          setTimeout(() => {
-            resolve({ data: context, status: true })
-          }, 3000)
-        )
-
-        return asyncData
+      formSubmit: async (context, event) => {
+        if (context.payload) {
+          return await sendFormData(context.payload)
+        } else {
+          return await new Promise((resolve, reject) => reject('Context cannot be null.'))
+        }
       }
     }
   }

@@ -24,7 +24,7 @@
 
       <div v-if="errors.channels" class="error">{{ errors.channels }}</div>
 
-      <div>
+      <div class="buttonGroup">
         <button class="button" type="submit">next step</button>
       </div>
     </form>

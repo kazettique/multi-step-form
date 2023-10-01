@@ -15,6 +15,16 @@
       </div>
 
       <div>
+        <label class="label">Gender:</label>
+        <select name="expireYear" v-model="gender">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="others">Others</option>
+        </select>
+        <span v-if="errors.gender" class="error">{{ errors.gender }}</span>
+      </div>
+
+      <div>
         <label class="label">Your Email:</label>
         <input name="email" v-model="email" />
         <div v-if="errors.email" class="error">{{ errors.email }}</div>
@@ -54,7 +64,8 @@ const validationSchema = toTypedSchema(
   z.object({
     name: z.string().min(1, 'Please enter your name'),
     age: z.number().nonnegative().min(1, 'Please enter your age'),
-    email: z.string().email('Please enter right email format').min(1, 'Please enter your email')
+    email: z.string().email('Please enter right email format').min(1, 'Please enter your email'),
+    gender: z.string().min(1, 'Please select your gender')
   })
 )
 
@@ -66,6 +77,7 @@ const { handleSubmit, errors } = useForm<Form2Model>({
 const { value: name } = useField<string>('name')
 const { value: age } = useField<number>('age')
 const { value: email } = useField<number>('email')
+const { value: gender } = useField<string>('gender')
 
 const onSubmit = handleSubmit((values) => emits('next', values))
 </script>

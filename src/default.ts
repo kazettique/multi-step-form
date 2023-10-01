@@ -1,4 +1,4 @@
-import type { MachineContext } from './multStepFormMachine'
+import type { MachineContext } from './multiStepFormMachine'
 import type { Form1Model, Form2Model, Form3Model } from './types'
 
 export const FORM_1_INITIAL_VALUES: Form1Model = { channels: [] }

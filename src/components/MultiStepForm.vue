@@ -23,14 +23,15 @@
 
           <Form3
             v-if="state.matches('step3')"
-            @next="send('NEXT_TO_STEP_RESULT', { formValues: $event })"
+            @next="send('NEXT_TO_STEP_CONFIRM', { formValues: $event })"
             @prev="send('PREV')"
             :initial-values="state.context.form3Values"
           />
 
-          <FormResult
-            v-if="state.matches('stepResult')"
+          <FormConfirm
+            v-if="state.matches('stepConfirm')"
             @prev="send('PREV')"
+            :is-loading="false"
             :machine-context="state.context"
           />
         </div>
@@ -48,8 +49,9 @@ import { useMachine } from '@xstate/vue'
 import Form1 from '@/components/Form1.vue'
 import Form2 from '@/components/Form2.vue'
 import Form3 from '@/components/Form3.vue'
-import FormResult from '@/components/FormResult.vue'
+import FormConfirm from '@/components/FormConfirm.vue'
 import { multiStepFormMachine } from '@/multiFormMachine'
+import { sendTo } from 'xstate/lib/actions'
 
 interface Props {
   class?: string

@@ -5,8 +5,9 @@ import { form1InitialValues, form2InitialValues, form3InitialValues } from './de
 type MachineEvent =
   | { type: 'NEXT_TO_STEP_2'; formValues: Form1Model }
   | { type: 'NEXT_TO_STEP_3'; formValues: Form2Model }
-  | { type: 'NEXT_TO_STEP_RESULT'; formValues: Form3Model }
+  | { type: 'NEXT_TO_STEP_CONFIRM'; formValues: Form3Model }
   | { type: 'PREV' }
+  | { type: 'NEXT' }
 
 export type MachineContext = {
   form1Values: Form1Model
@@ -18,7 +19,7 @@ type MachineState =
   | { context: MachineContext; value: 'step1' }
   | { context: MachineContext; value: 'step2' }
   | { context: MachineContext; value: 'step3' }
-  | { context: MachineContext; value: 'stepResult' }
+  | { context: MachineContext; value: 'stepConfirm' }
 
 const INITIAL_MACHINE_CONTEXT: MachineContext = {
   form1Values: form1InitialValues,
@@ -26,53 +27,105 @@ const INITIAL_MACHINE_CONTEXT: MachineContext = {
   form3Values: form3InitialValues
 }
 
-export const multiStepFormMachine = createMachine<MachineContext, MachineEvent, MachineState>({
-  id: 'multiStepForm',
-  initial: 'step1',
-  context: INITIAL_MACHINE_CONTEXT,
-  states: {
-    step1: {
-      on: {
-        NEXT_TO_STEP_2: {
-          target: 'step2',
-          actions: assign({
-            form1Values: (context, event) => event.formValues
-          })
+export const multiStepFormMachine = createMachine<MachineContext, MachineEvent, MachineState>(
+  {
+    id: 'multiStepForm',
+    initial: 'step1',
+    context: INITIAL_MACHINE_CONTEXT,
+    states: {
+      step1: {
+        on: {
+          NEXT_TO_STEP_2: {
+            target: 'step2',
+            actions: assign({
+              form1Values: (context, event) => event.formValues
+            })
+          }
         }
-      }
-    },
-    step2: {
-      on: {
-        NEXT_TO_STEP_3: {
-          target: 'step3',
-          actions: assign({
-            form2Values: (context, event) => event.formValues
-          })
+      },
+      step2: {
+        on: {
+          NEXT_TO_STEP_3: {
+            target: 'step3',
+            actions: assign({
+              form2Values: (context, event) => event.formValues
+            })
+          },
+          PREV: {
+            target: 'step1'
+          }
+        }
+      },
+      step3: {
+        on: {
+          NEXT_TO_STEP_CONFIRM: {
+            target: 'stepConfirm',
+            actions: assign({
+              form3Values: (context, event) => event.formValues
+            })
+          },
+          PREV: {
+            target: 'step2'
+          }
+        }
+      },
+      stepConfirm: {
+        initial: 'preSubmit',
+        states: {
+          preSubmit: {
+            on: {
+              NEXT: {
+                target: 'submitting'
+              }
+            }
+          },
+          submitting: {
+            invoke: {
+              src: 'formSubmit',
+              onDone: {
+                target: 'submitted'
+              },
+              onError: {
+                target: 'errored'
+              }
+            }
+          },
+          submitted: {},
+          errored: {}
         },
-        PREV: {
-          target: 'step1'
+        on: {
+          PREV: {
+            target: 'step3'
+          }
         }
+        // type: 'final'
       }
     },
-    step3: {
-      on: {
-        NEXT_TO_STEP_RESULT: {
-          target: 'stepResult',
-          actions: assign({
-            form3Values: (context, event) => event.formValues
-          })
-        },
-        PREV: {
-          target: 'step2'
-        }
+    invoke: {
+      src: 'formSubmit'
+    }
+  },
+  {
+    actions: {
+      sayHello: () => {
+        console.log('Hello')
+      },
+      sayGoodbye: () => {
+        console.log('Goodbye')
       }
     },
-    stepResult: {
-      on: {
-        PREV: {
-          target: 'step3'
-        }
+    services: {
+      formSubmit: async (context) => {
+        console.log('submit: ', context)
+
+        const asyncData = await new Promise((resolve) =>
+          setTimeout(() => {
+            resolve({ data: context, status: true })
+          }, 3000)
+        )
+
+        return asyncData
       }
     }
   }
-})
+)

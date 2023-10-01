@@ -1,5 +1,7 @@
 # multistage-form
 
+![badge](https://github.com/OWNER/REPOSITORY/actions/workflows/WORKFLOW-FILE/badge.svg)
+
 This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup

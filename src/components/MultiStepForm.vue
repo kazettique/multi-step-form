@@ -80,5 +80,3 @@ const handleRedirect = () => {
 </script>
 
 <style scoped lang="scss"></style>
-@/multStepFormMachine
-@/multiStepFormMachine

@@ -1,19 +1,6 @@
-export interface Form1Model {
-  channels: number[]
-}
-
-export interface Form2Model {
-  name: string
-  age: number
-  email: string
-  gender: string
-}
-export interface Form3Model {
-  cardNo: string
-  expireMonth: string
-  expireYear: string
-  cvc: string
-}
+import type { Form1Model } from '@/validators/form1'
+import type { Form2Model } from '@/validators/form2'
+import type { Form3Model } from '@/validators/form3'
 
 export interface SubmitData extends Form1Model, Form2Model, Form3Model {}
 

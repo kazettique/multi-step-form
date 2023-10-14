@@ -32,10 +32,9 @@
 </template>
 
 <script setup lang="ts">
-import type { Form1Model } from '@/types'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm, useField } from 'vee-validate'
-import z from 'zod'
+import { Form1Validator, type Form1Model } from '@/validators/form1'
 
 interface Props {
   class?: string
@@ -52,18 +51,12 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emits = defineEmits<Emits>()
 
-const validationSchema = toTypedSchema(
-  z.object({
-    channels: z.number().array().nonempty('Please choose at least one channel.')
-  })
-)
-
 const { handleSubmit, errors, values } = useForm<Form1Model>({
   initialValues: props.initialValues,
-  validationSchema
+  validationSchema: toTypedSchema(Form1Validator)
 })
 
-const { value: channels } = useField<number[]>('channels')
+const { value: channels } = useField<Form1Model['channels']>('channels')
 
 const onSubmit = handleSubmit((values) => emits('next', values))
 </script>

@@ -39,10 +39,9 @@
 </template>
 
 <script setup lang="ts">
-import type { Form2Model } from '@/types'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm, useField } from 'vee-validate'
-import z from 'zod'
+import { Form2Validator, type Form2Model } from '@/validators/form2'
 
 interface Props {
   class?: string
@@ -60,24 +59,15 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emits = defineEmits<Emits>()
 
-const validationSchema = toTypedSchema(
-  z.object({
-    name: z.string().min(1, 'Please enter your name'),
-    age: z.number().nonnegative().min(1, 'Please enter your age'),
-    email: z.string().email('Please enter right email format').min(1, 'Please enter your email'),
-    gender: z.string().min(1, 'Please select your gender')
-  })
-)
-
 const { handleSubmit, errors } = useForm<Form2Model>({
   initialValues: props.initialValues,
-  validationSchema
+  validationSchema: toTypedSchema(Form2Validator)
 })
 
-const { value: name } = useField<string>('name')
-const { value: age } = useField<number>('age')
-const { value: email } = useField<number>('email')
-const { value: gender } = useField<string>('gender')
+const { value: name } = useField<Form2Model['name']>('name')
+const { value: age } = useField<Form2Model['age']>('age')
+const { value: email } = useField<Form2Model['email']>('email')
+const { value: gender } = useField<Form2Model['gender']>('gender')
 
 const onSubmit = handleSubmit((values) => emits('next', values))
 </script>

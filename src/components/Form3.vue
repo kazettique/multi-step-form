@@ -52,10 +52,9 @@
 </template>
 
 <script setup lang="ts">
-import type { Form3Model } from '@/types'
+import { form3Validator, type Form3Model } from '@/validators/form3'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm, useField } from 'vee-validate'
-import z from 'zod'
 
 interface Props {
   class?: string
@@ -73,24 +72,15 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emits = defineEmits<Emits>()
 
-const validationSchema = toTypedSchema(
-  z.object({
-    cardNo: z.string().min(1, 'Please enter your credit card number'),
-    expireMonth: z.string(),
-    expireYear: z.string(),
-    cvc: z.string().min(1, 'Please enter your cvc code')
-  })
-)
-
 const { handleSubmit, errors } = useForm<Form3Model>({
   initialValues: props.initialValues,
-  validationSchema
+  validationSchema: toTypedSchema(form3Validator)
 })
 
-const { value: cardNo } = useField<string>('cardNo')
-const { value: expireMonth } = useField<string>('expireMonth')
-const { value: expireYear } = useField<string>('expireYear')
-const { value: cvc } = useField<number>('cvc')
+const { value: cardNo } = useField<Form3Model['cardNo']>('cardNo')
+const { value: expireMonth } = useField<Form3Model['expireMonth']>('expireMonth')
+const { value: expireYear } = useField<Form3Model['expireYear']>('expireYear')
+const { value: cvc } = useField<Form3Model['cvc']>('cvc')
 
 const onSubmit = handleSubmit((values) => emits('next', values))
 </script>

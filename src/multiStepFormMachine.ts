@@ -1,7 +1,10 @@
 import { assign, createMachine } from 'xstate'
-import type { Form1Model, Form2Model, Form3Model, SubmitData } from './types'
+import type { SubmitData } from './types'
 import { FORM_1_INITIAL_VALUES, FORM_2_INITIAL_VALUES, FORM_3_INITIAL_VALUES } from './default'
 import { sendFormData } from './utils'
+import type { Form1Model } from './validators/form1'
+import type { Form2Model } from './validators/form2'
+import type { Form3Model } from './validators/form3'
 
 type MachineEvent =
   | { type: 'NEXT_TO_STEP_2'; formValues: Form1Model }

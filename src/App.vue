@@ -1,11 +1,14 @@
 <template>
   <div class="flex items-center justify-center p-6 w-screen h-screen">
-    <MultiStepForm />
+    <!-- <MultiStepForm /> -->
+    <GameForm />
   </div>
 </template>
 
 <script setup lang="ts">
-import MultiStepForm from './components/MultiStepForm.vue'
+import { ref } from 'vue'
+
+import GameForm from '@/game/GameForm.vue'
 </script>
 
 <style>

@@ -1,10 +1,21 @@
 <template>
-  <div :class="` ${props.class}`">game form</div>
+  <div :class="` ${props.class}`">
+    <ChooseCandidate
+      v-if="state.matches('START')"
+      :initial-values="{ party: state.context.chosenParty }"
+      @step-next="send('TO_Q01', { formValues: $event })"
+    />
+
+    <Question />
+  </div>
 </template>
 
 <script setup lang="ts">
 import { useMachine } from '@xstate/vue'
-import { commonQuestionList, dppQuestionList } from './constants';
+import { commonQuestionList, dppQuestionList } from './constants'
+import { gameMachine } from './machine'
+import ChooseCandidate from '@/game/ChooseCandidate.vue'
+import Question from '@/game/Question.vue'
 
 interface Props {
   class?: string
@@ -20,10 +31,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emits = defineEmits<Emits>()
 
-console.log('commonQuestionList', commonQuestionList)
-console.log('dppQuestionList', dppQuestionList)
-
-// const { state, send } = useMachine(multiStepFormMachine)
+const { state, send } = useMachine(gameMachine)
 </script>
 
 <style scoped lang="scss"></style>

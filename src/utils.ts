@@ -96,8 +96,8 @@ export function genQuestionSet(chosenParty: PartyType): QuestionItem[] {
     case 'TPP':
       rawPartyQuestion = rawTppQuestionList
       break
-    case 'KMT_TPP_COMBI':
-    case 'TPP_KMT_COMBI':
+    // case 'KMT_TPP_COMBI':
+    // case 'TPP_KMT_COMBI':
     default:
   }
 

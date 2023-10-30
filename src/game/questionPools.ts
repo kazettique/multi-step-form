@@ -1,4 +1,4 @@
-import type { PartyType, RawCommonQuestionItem, RawPartyQuestionPoolItem } from './types'
+import type { PartyType, } from './types'
 
 interface RawCommonQuestion {
   title: string

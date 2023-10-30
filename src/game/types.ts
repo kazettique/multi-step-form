@@ -5,8 +5,8 @@ export enum Party {
   KMT = 'KMT',
   TPP = 'TPP',
   GTM = 'GTM',
-  KMT_TPP_COMBI = 'KMT_TPP_COMBI',
-  TPP_KMT_COMBI = 'TPP_KMT_COMBI'
+  // KMT_TPP_COMBI = 'KMT_TPP_COMBI',
+  // TPP_KMT_COMBI = 'TPP_KMT_COMBI'
 }
 
 export type PartyType = `${Party}`

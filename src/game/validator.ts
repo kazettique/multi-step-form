@@ -1,23 +1,15 @@
-import z from 'zod'
+import { z } from 'zod'
 import { Party } from './types'
 
-export const FormCandidateValidator = z.object({
+export const formCandidateValidator = z.object({
   party: z.nativeEnum(Party)
 })
 
-export const FormQuestionValidator = z.object({
+export const formQuestionValidator = z.object({
   questionId: z.number(),
-  answerId: z.number().min(0).max(2),
-  // playerAnswer: z.number().min(0).max(2),
-  // options: z.array(
-  //   z.object({
-  //     optionId: z.number(),
-  //     title: z.string()
-  //   })
-  // ),
-  // title: z.string()
+  answerId: z.number().min(0).max(2)
 })
 
-export type FormQuestionModel = z.infer<typeof FormQuestionValidator>
+export type FormQuestionModel = z.infer<typeof formQuestionValidator>
 
-export type FormCandidateModel = z.infer<typeof FormCandidateValidator>
+export type FormCandidateModel = z.infer<typeof formCandidateValidator>

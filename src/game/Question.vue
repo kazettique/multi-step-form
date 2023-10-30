@@ -5,9 +5,14 @@
 <script setup lang="ts">
 import { useMachine } from '@xstate/vue'
 import { commonQuestionList, dppQuestionList } from './constants';
+import { useForm } from 'vee-validate';
+import { FormQuestionValidator, type FormQuestionModel } from './validator';
+import { toTypedSchema } from '@vee-validate/zod';
+import type { QuestionItem } from './types';
 
 interface Props {
   class?: string
+  questionItem: QuestionItem;
 }
 
 interface Emits {
@@ -20,10 +25,16 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emits = defineEmits<Emits>()
 
-console.log('commonQuestionList', commonQuestionList)
-console.log('dppQuestionList', dppQuestionList)
+const { handleSubmit, errors, values, setFieldValue } = useForm<FormQuestionModel>({
+  initialValues: props.initialValues,
+  validationSchema: toTypedSchema(FormQuestionValidator)
+})
 
-// const { state, send } = useMachine(multiStepFormMachine)
+const handlePartyChange = (party: Party) => {
+  setFieldValue('party', party)
+}
+
+const onSubmit = handleSubmit((values) => emits('stepNext', values))
 </script>
 
 <style scoped lang="scss"></style>

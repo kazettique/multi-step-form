@@ -1,5 +1,6 @@
 <template>
-  <form :class="`flex gap-4 ${props.class}`" @submit="onSubmit">
+  <form :class="`${props.class}`" @submit="onSubmit">
+  <div class="flex gap-4">
     <button
       class="candidate"
       :data-is-active="values.party === Party.DPP"
@@ -32,10 +33,11 @@
     >
       GTM
     </button>
+    </div>
 
-    <button type="button">submit</button>
+    <button type="submit">submit</button>
 
-    <div v-if="errors">{{ errors }}</div>
+    <div v-if="errors">errors: {{ errors }}</div>
   </form>
 </template>
 
@@ -69,12 +71,14 @@ const handlePartyChange = (party: Party) => {
   setFieldValue('party', party)
 }
 
-const onSubmit = handleSubmit((values) => emits('stepNext', values))
+const onSubmit = handleSubmit((values) => {
+  emits('stepNext', values)
+})
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 .candidate {
-  @apply p-10 bg-slate-500;
+  @apply p-10 bg-slate-500 transition;
 
   &[data-is-active='true'] {
     @apply scale-110;

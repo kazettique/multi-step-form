@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center justify-center p-6 w-screen h-screen">
+  <div class="p-6">
     <!-- <MultiStepForm /> -->
     <GameForm />
   </div>

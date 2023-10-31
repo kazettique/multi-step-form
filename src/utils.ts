@@ -93,40 +93,36 @@ type QuestionSet = [
 
 // generate question set from chosen party
 export function genQuestionSet(chosenParty: PartyType): QuestionSet {
-  let rawPartyQuestion: RawPartyQuestion[] = []
-  let clonedPartyQuestionList: QuestionItem[] = []
-  let clonedCommonQuestionList: QuestionItem[] = []
+  let partyQuestionList: QuestionItem[] = []
+  let commonQuestionList: QuestionItem[] = []
 
   switch (chosenParty) {
     case 'DPP':
-      rawPartyQuestion = rawDppQuestionList
-      clonedCommonQuestionList = genCommonQuestionList(rawCommonQuestionList, 'DPP')
+      commonQuestionList = genCommonQuestionList(rawCommonQuestionList, 'DPP')
+      partyQuestionList = genPartyQuestionList(rawDppQuestionList, 'DPP')
       break
     case 'GTM':
-      rawPartyQuestion = rawGtmQuestionList
-      clonedCommonQuestionList = genCommonQuestionList(rawCommonQuestionList, 'GTM')
+      commonQuestionList = genCommonQuestionList(rawCommonQuestionList, 'GTM')
+      partyQuestionList = genPartyQuestionList(rawGtmQuestionList, 'GTM')
+
       break
     case 'KMT':
-      rawPartyQuestion = rawKmtQuestionList
-      clonedCommonQuestionList = genCommonQuestionList(rawCommonQuestionList, 'KMT')
+      commonQuestionList = genCommonQuestionList(rawCommonQuestionList, 'KMT')
+      partyQuestionList = genPartyQuestionList(rawKmtQuestionList, 'KMT')
 
       break
     case 'TPP':
-      rawPartyQuestion = rawTppQuestionList
-      clonedCommonQuestionList = genCommonQuestionList(rawCommonQuestionList, 'TPP')
+      commonQuestionList = genCommonQuestionList(rawCommonQuestionList, 'TPP')
+      partyQuestionList = genPartyQuestionList(rawTppQuestionList, 'TPP')
+
       break
     // case 'KMT_TPP_COMBI':
     // case 'TPP_KMT_COMBI':
     default:
   }
 
-  clonedCommonQuestionList = genCommonQuestionList(rawCommonQuestionList, 'DPP')
-  clonedPartyQuestionList = JSON.parse(
-    JSON.stringify(genPartyQuestionList(rawPartyQuestion, chosenParty))
-  )
-
-  const selectedCommonQuestionList = shuffle(clonedCommonQuestionList).slice(0, 5)
-  const selectedPartyQuestionList = shuffle(clonedPartyQuestionList).slice(0, 5)
+  const selectedCommonQuestionList = shuffle(commonQuestionList).slice(0, 5)
+  const selectedPartyQuestionList = shuffle(partyQuestionList).slice(0, 5)
 
   return shuffle([...selectedCommonQuestionList, ...selectedPartyQuestionList]) as QuestionSet
 }

@@ -2,6 +2,12 @@
   <div :class="`${props.class}`">
     <div class="text-2xl">this is result</div>
 
+    <div>
+      <span>You've got score:</span>
+      <span>{{ score }}</span>
+      <span>&nbsp;/&nbsp;10</span>
+    </div>
+
     <button
       class="p-4 bg-slate-800 rounded text-slate-100"
       type="button"
@@ -14,14 +20,16 @@
 
 <script setup lang="ts">
 import { useMachine } from '@xstate/vue'
-import { commonQuestionList, dppQuestionList } from './constants'
 import { useForm } from 'vee-validate'
 import { formQuestionValidator, type FormQuestionModel } from './validator'
 import { toTypedSchema } from '@vee-validate/zod'
 import type { Party, QuestionItem } from './types'
+import type { MachineContext } from './machine'
+import { computed } from 'vue'
 
 interface Props {
   class?: string
+  machineContext: MachineContext
 }
 
 interface Emits {
@@ -33,18 +41,26 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emits = defineEmits<Emits>()
+
+const isRightAnswer = (questionItem: QuestionItem): boolean =>
+  questionItem.answerId === questionItem.playerAnswer
+
+const score = computed<number>(() => {
+  let _score = 0
+
+  if (props.machineContext.Q01 && isRightAnswer(props.machineContext.Q01)) _score++
+  if (props.machineContext.Q02 && isRightAnswer(props.machineContext.Q02)) _score++
+  if (props.machineContext.Q03 && isRightAnswer(props.machineContext.Q03)) _score++
+  if (props.machineContext.Q04 && isRightAnswer(props.machineContext.Q04)) _score++
+  if (props.machineContext.Q05 && isRightAnswer(props.machineContext.Q05)) _score++
+  if (props.machineContext.Q06 && isRightAnswer(props.machineContext.Q06)) _score++
+  if (props.machineContext.Q07 && isRightAnswer(props.machineContext.Q07)) _score++
+  if (props.machineContext.Q08 && isRightAnswer(props.machineContext.Q08)) _score++
+  if (props.machineContext.Q09 && isRightAnswer(props.machineContext.Q09)) _score++
+  if (props.machineContext.Q10 && isRightAnswer(props.machineContext.Q10)) _score++
+
+  return _score
+})
 </script>
 
-<style scoped lang="scss">
-.optionCard {
-  @apply p-4 text-slate-200;
-
-  &[data-is-active='true'] {
-    @apply bg-slate-700;
-  }
-
-  &[data-is-active='false'] {
-    @apply bg-slate-500 hover:bg-slate-600;
-  }
-}
-</style>
+<style scoped lang="scss"></style>

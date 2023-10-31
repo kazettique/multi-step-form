@@ -34,6 +34,8 @@
         <button class="button" type="button" @click="$emit('prev')">back</button>
         <button type="submit" class="button">next step</button>
       </div>
+
+      <pre>{{ errors }}</pre>
     </form>
   </div>
 </template>
@@ -59,7 +61,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emits = defineEmits<Emits>()
 
-const { handleSubmit, errors } = useForm<Form2Model>({
+const { handleSubmit, errors, meta } = useForm<Form2Model>({
   initialValues: props.initialValues,
   validationSchema: toTypedSchema(Form2Validator)
 })

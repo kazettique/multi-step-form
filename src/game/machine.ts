@@ -1,18 +1,8 @@
 import { assign, createMachine } from 'xstate'
-import {
-  commonQuestionList,
-  dppQuestionList,
-  gtmQuestionList,
-  kmtQuestionList,
-  rawDppQuestionList,
-  rawGtmQuestionList,
-  rawKmtQuestionList,
-  rawTppQuestionList,
-  tppQuestionList
-} from './constants'
 import { Party, type QuestionItem } from './types'
 import type { FormQuestionModel } from './validator'
-import { genPartyQuestionList, genQuestionSet, shuffle } from '@/utils'
+import { genPartyQuestionList, genQuestionSet, genQuestionSet2, shuffle } from '@/utils'
+import { INITIAL_FORM_QUESTION } from './constants'
 
 // enum Question {
 //   Q01 = 'Q01',
@@ -27,7 +17,7 @@ import { genPartyQuestionList, genQuestionSet, shuffle } from '@/utils'
 //   Q10 = 'Q10'
 // }
 
-enum Question {
+export enum Question {
   Q01 = 1,
   Q02,
   Q03,
@@ -44,36 +34,37 @@ type QuestionKey = `${Question}`
 
 export type MachineContext = {
   // form: {
-  //   [questionKey in QuestionKey]: FormQuestionModel | null
+  //   [questionKey in QuestionKey]: QuestionItem | null
   // }
-  Q01: FormQuestionModel | null
-  Q02: FormQuestionModel | null
-  Q03: FormQuestionModel | null
-  Q04: FormQuestionModel | null
-  Q05: FormQuestionModel | null
-  Q06: FormQuestionModel | null
-  Q07: FormQuestionModel | null
-  Q08: FormQuestionModel | null
-  Q09: FormQuestionModel | null
-  Q10: FormQuestionModel | null
-  questionSet: QuestionItem[]
+  Q01: QuestionItem
+  Q02: QuestionItem
+  Q03: QuestionItem
+  Q04: QuestionItem
+  Q05: QuestionItem
+  Q06: QuestionItem
+  Q07: QuestionItem
+  Q08: QuestionItem
+  Q09: QuestionItem
+  Q10: QuestionItem
+  // questionSet: QuestionItem[]
+  // test: any
   chosenParty: Party
-  result: number
-  resultFromBackEnd: number
+  // result: number
+  // resultFromBackEnd: number
 }
 
 export type MachineEvent =
   | { type: 'TO_Q01'; formValues: Party }
-  | { type: 'TO_Q02'; formValues: FormQuestionModel }
-  | { type: 'TO_Q03'; formValues: FormQuestionModel }
-  | { type: 'TO_Q04'; formValues: FormQuestionModel }
-  | { type: 'TO_Q05'; formValues: FormQuestionModel }
-  | { type: 'TO_Q06'; formValues: FormQuestionModel }
-  | { type: 'TO_Q07'; formValues: FormQuestionModel }
-  | { type: 'TO_Q08'; formValues: FormQuestionModel }
-  | { type: 'TO_Q09'; formValues: FormQuestionModel }
-  | { type: 'TO_Q10'; formValues: FormQuestionModel }
-  | { type: 'TO_RESULT'; formValues: FormQuestionModel }
+  | { type: 'TO_Q02'; formValues: QuestionItem }
+  | { type: 'TO_Q03'; formValues: QuestionItem }
+  | { type: 'TO_Q04'; formValues: QuestionItem }
+  | { type: 'TO_Q05'; formValues: QuestionItem }
+  | { type: 'TO_Q06'; formValues: QuestionItem }
+  | { type: 'TO_Q07'; formValues: QuestionItem }
+  | { type: 'TO_Q08'; formValues: QuestionItem }
+  | { type: 'TO_Q09'; formValues: QuestionItem }
+  | { type: 'TO_Q10'; formValues: QuestionItem }
+  | { type: 'TO_RESULT'; formValues: QuestionItem }
   | { type: 'TO_PREV' }
   | { type: 'RESTART' }
 
@@ -93,20 +84,33 @@ export type MachineState =
 
 export const INITIAL_CONTEXT: MachineContext = {
   chosenParty: Party.DPP,
-  Q01: null,
-  Q02: null,
-  Q03: null,
-  Q04: null,
-  Q05: null,
-  Q06: null,
-  Q07: null,
-  Q08: null,
-  Q09: null,
-  Q10: null,
-  questionSet: [],
-  result: 0,
-  resultFromBackEnd: 0
+  Q01: INITIAL_FORM_QUESTION,
+  Q02: INITIAL_FORM_QUESTION,
+  Q03: INITIAL_FORM_QUESTION,
+  Q04: INITIAL_FORM_QUESTION,
+  Q05: INITIAL_FORM_QUESTION,
+  Q06: INITIAL_FORM_QUESTION,
+  Q07: INITIAL_FORM_QUESTION,
+  Q08: INITIAL_FORM_QUESTION,
+  Q09: INITIAL_FORM_QUESTION,
+  Q10: INITIAL_FORM_QUESTION
+  // form: {
+  //   1: null,
+  //   2: null,
+  //   3: null,
+  //   4: null,
+  //   5: null,
+  //   6: null,
+  //   7: null,
+  //   8: null,
+  //   9: null,
+  //   10: null
+  // }
+  // result: 0,
+  // resultFromBackEnd: 0
 }
+
+const keys = Object.values(Question).filter((value) => isNaN(Number(value)))
 
 export const gameMachine = createMachine<MachineContext, MachineEvent, MachineState>(
   {
@@ -120,7 +124,23 @@ export const gameMachine = createMachine<MachineContext, MachineEvent, MachineSt
             target: 'Q01',
             actions: [
               assign({ chosenParty: (context, event) => event.formValues }),
-              assign({ questionSet: (context, event) => genQuestionSet(event.formValues) })
+              assign((context, event) => {
+                const questionSet = genQuestionSet(event.formValues)
+
+                const parsedQuestionSet = Object.fromEntries(
+                  questionSet.map((item, index) => [Question[index + 1], item])
+                )
+
+                // const parsedQuestionSet2 = Object.fromEntries(
+                //   questionSet.map((item, index) => [index + 1, item])
+                // ) as {
+                //   [questionKey in QuestionKey]: QuestionItem
+                // }
+
+                // console.log('parsedQuestionSet2', parsedQuestionSet2)
+
+                return { ...parsedQuestionSet }
+              })
             ]
           }
         }
@@ -245,7 +265,25 @@ export const gameMachine = createMachine<MachineContext, MachineEvent, MachineSt
   {
     actions: {
       resetContext: assign(INITIAL_CONTEXT),
-      initializeGame: (context, event) => {},
+      // initializeGame: assign((context, event) => {
+      //   console.log('event', event.formValues)
+
+      //   const questionSet = genQuestionSet(event.formValues)
+
+      //   return {
+      //     ...context,
+      //     Q01: questionSet[0],
+      //     Q02: questionSet[1],
+      //     Q03: questionSet[2],
+      //     Q04: questionSet[3],
+      //     Q05: questionSet[4],
+      //     Q06: questionSet[5],
+      //     Q07: questionSet[6],
+      //     Q08: questionSet[7],
+      //     Q09: questionSet[8],
+      //     Q10: questionSet[9]
+      //   }
+      // }),
       calculateScore: (context, event) => {}
     }
   }

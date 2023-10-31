@@ -1,43 +1,45 @@
 <template>
   <form :class="`${props.class}`" @submit="onSubmit">
-  <div class="flex gap-4">
-    <button
-      class="candidate"
-      :data-is-active="values.party === Party.DPP"
-      type="button"
-      @click="handlePartyChange(Party.DPP)"
-    >
-      DPP
-    </button>
-    <button
-      class="candidate"
-      :data-is-active="values.party === Party.KMT"
-      type="button"
-      @click="handlePartyChange(Party.KMT)"
-    >
-      KMT
-    </button>
-    <button
-      class="candidate"
-      :data-is-active="values.party === Party.TPP"
-      type="button"
-      @click="handlePartyChange(Party.TPP)"
-    >
-      TPP
-    </button>
-    <button
-      class="candidate"
-      :data-is-active="values.party === Party.GTM"
-      type="button"
-      @click="handlePartyChange(Party.GTM)"
-    >
-      GTM
-    </button>
+    <div class="flex gap-4">
+      <button
+        class="candidate"
+        :data-is-active="values.party === Party.DPP"
+        type="button"
+        @click="handlePartyChange(Party.DPP)"
+      >
+        DPP
+      </button>
+      <button
+        class="candidate"
+        :data-is-active="values.party === Party.KMT"
+        type="button"
+        @click="handlePartyChange(Party.KMT)"
+      >
+        KMT
+      </button>
+      <button
+        class="candidate"
+        :data-is-active="values.party === Party.TPP"
+        type="button"
+        @click="handlePartyChange(Party.TPP)"
+      >
+        TPP
+      </button>
+      <button
+        class="candidate"
+        :data-is-active="values.party === Party.GTM"
+        type="button"
+        @click="handlePartyChange(Party.GTM)"
+      >
+        GTM
+      </button>
     </div>
 
-    <button type="submit">submit</button>
+    <div class="my-4 flex gap-4">
+      <button class="p-4 bg-slate-800 rounded text-slate-100" type="submit">start</button>
+    </div>
 
-    <div v-if="errors">errors: {{ errors }}</div>
+    <div v-if="errors.party" class="error">{{ errors.party }}</div>
   </form>
 </template>
 
@@ -76,7 +78,7 @@ const onSubmit = handleSubmit((values) => {
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .candidate {
   @apply p-10 bg-slate-500 transition;
 

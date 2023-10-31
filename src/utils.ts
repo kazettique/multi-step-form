@@ -1,10 +1,11 @@
 import {
-  commonQuestionList,
+  rawCommonQuestionList,
   rawDppQuestionList,
   rawGtmQuestionList,
   rawKmtQuestionList,
   rawTppQuestionList
 } from './game/constants'
+import { Question } from './game/machine'
 import type {
   RawCommonQuestion,
   CommonQuestion,
@@ -60,51 +61,80 @@ export function genCommonQuestionList(list: RawCommonQuestion[], party: PartyTyp
       answerId,
       options: item.options.map((option, optionId) => ({ title: option.title, optionId })),
       title: item.title,
-      playerAnswer: -1
+      playerAnswer: -1,
+      type: party
     }
   })
 }
 
 // gen party function
-export function genPartyQuestionList(list: RawPartyQuestion[]): QuestionItem[] {
+export function genPartyQuestionList(list: RawPartyQuestion[], party: PartyType): QuestionItem[] {
   return list.map((item, index) => ({
     ...item,
     questionId: index,
     options: item.options.map((option, optionId) => ({ title: option.title, optionId })),
-    playerAnswer: -1
+    playerAnswer: -1,
+    type: party
   }))
 }
 
-// generate question set from chosen party
-export function genQuestionSet(chosenParty: PartyType): QuestionItem[] {
-  const clonedCommonQuestionList: QuestionItem[] = JSON.parse(JSON.stringify(commonQuestionList))
+type QuestionSet = [
+  QuestionItem,
+  QuestionItem,
+  QuestionItem,
+  QuestionItem,
+  QuestionItem,
+  QuestionItem,
+  QuestionItem,
+  QuestionItem,
+  QuestionItem,
+  QuestionItem
+]
 
+// generate question set from chosen party
+export function genQuestionSet(chosenParty: PartyType): QuestionSet {
   let rawPartyQuestion: RawPartyQuestion[] = []
   let clonedPartyQuestionList: QuestionItem[] = []
+  let clonedCommonQuestionList: QuestionItem[] = []
 
   switch (chosenParty) {
     case 'DPP':
       rawPartyQuestion = rawDppQuestionList
+      clonedCommonQuestionList = genCommonQuestionList(rawCommonQuestionList, 'DPP')
       break
     case 'GTM':
       rawPartyQuestion = rawGtmQuestionList
+      clonedCommonQuestionList = genCommonQuestionList(rawCommonQuestionList, 'GTM')
       break
     case 'KMT':
       rawPartyQuestion = rawKmtQuestionList
+      clonedCommonQuestionList = genCommonQuestionList(rawCommonQuestionList, 'KMT')
 
       break
     case 'TPP':
       rawPartyQuestion = rawTppQuestionList
+      clonedCommonQuestionList = genCommonQuestionList(rawCommonQuestionList, 'TPP')
       break
     // case 'KMT_TPP_COMBI':
     // case 'TPP_KMT_COMBI':
     default:
   }
 
-  clonedPartyQuestionList = JSON.parse(JSON.stringify(genPartyQuestionList(rawPartyQuestion)))
+  clonedCommonQuestionList = genCommonQuestionList(rawCommonQuestionList, 'DPP')
+  clonedPartyQuestionList = JSON.parse(
+    JSON.stringify(genPartyQuestionList(rawPartyQuestion, chosenParty))
+  )
 
   const selectedCommonQuestionList = shuffle(clonedCommonQuestionList).slice(0, 5)
   const selectedPartyQuestionList = shuffle(clonedPartyQuestionList).slice(0, 5)
 
-  return shuffle([...selectedCommonQuestionList, ...selectedPartyQuestionList])
+  return shuffle([...selectedCommonQuestionList, ...selectedPartyQuestionList]) as QuestionSet
+}
+
+export function genQuestionSet2(chosenParty: PartyType) {
+  const qSet = genQuestionSet(chosenParty)
+
+  const temp = qSet.map((item, index) => [Question[index + 1], item])
+
+  return Object.fromEntries(temp) as Record<number, QuestionItem>
 }

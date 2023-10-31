@@ -2,6 +2,7 @@
   <div class="p-6">
     <!-- <MultiStepForm /> -->
     <GameForm />
+    <!-- <TestFrom /> -->
   </div>
 </template>
 
@@ -9,6 +10,8 @@
 import { ref } from 'vue'
 
 import GameForm from '@/game/GameForm.vue'
+import MultiStepForm from '@/components/MultiStepForm.vue'
+import TestFrom from '@/game/TestFrom.vue'
 </script>
 
 <style>

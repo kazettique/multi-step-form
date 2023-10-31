@@ -6,7 +6,7 @@ export const FORM_1_INITIAL_VALUES: Form1Model = { channels: [] }
 
 export const FORM_2_INITIAL_VALUES: Form2Model = {
   name: '',
-  age: 0,
+  age: -1,
   email: '',
   gender: 'male'
 }

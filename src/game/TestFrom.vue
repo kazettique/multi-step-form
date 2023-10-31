@@ -1,17 +1,11 @@
 <template>
   <form :class="`${props.class}`" @submit="onSubmit">
-    <div>
-      <span>Q</span>
-      <span>{{ props.index }}</span>
-      <span>{{ props.questionItem.title }}</span>
-    </div>
-
     <div class="grid grid-cols-3 gap-4">
       <button
         type="button"
         class="optionCard"
-        :data-is-active="playerAnswer === option.optionId"
-        v-for="option in props.questionItem.options"
+        :data-is-active="values.answerId === option.optionId"
+        v-for="option in questionItem.options"
         :key="option.optionId"
         @click="handleAnswerChange(option.optionId)"
       >
@@ -21,7 +15,6 @@
 
     <div class="my-4 flex gap-4">
       <button
-        v-if="index !== 0"
         class="p-4 bg-slate-800 rounded text-slate-100"
         type="button"
         @click="$emit('prevStep')"
@@ -31,20 +24,21 @@
       <button class="p-4 bg-slate-800 rounded text-slate-100" type="submit">next</button>
     </div>
 
-    <div v-if="errors.playerAnswer" class="error">{{ errors.playerAnswer }}</div>
+    <pre>{{ errors }}</pre>
+
+    <pre>{{ meta }}</pre>
   </form>
 </template>
 
 <script setup lang="ts">
-import { useField, useForm } from 'vee-validate'
+import { useMachine } from '@xstate/vue'
+import { useForm } from 'vee-validate'
 import { formQuestionValidator, type FormQuestionModel } from './validator'
 import { toTypedSchema } from '@vee-validate/zod'
-import type { QuestionItem } from './types'
+import type { Party, QuestionItem } from './types'
 
 interface Props {
   class?: string
-  questionItem: QuestionItem
-  index: number
 }
 
 interface Emits {
@@ -56,10 +50,23 @@ const props = withDefaults(defineProps<Props>(), {
   class: ''
 })
 
+const questionItem: QuestionItem = {
+  title: 'this is title',
+  questionId: 5566,
+  answerId: 1,
+  playerAnswer: -1,
+  type: 'COMMON',
+  options: [
+    { title: 'aaa', optionId: 0 },
+    { title: 'bbb', optionId: 1 },
+    { title: 'ccc', optionId: 2 }
+  ]
+}
+
 const emits = defineEmits<Emits>()
 
 const { handleSubmit, errors, values, setFieldValue, meta } = useForm<FormQuestionModel>({
-  initialValues: props.questionItem,
+  initialValues: questionItem,
   validationSchema: toTypedSchema(formQuestionValidator)
 })
 
@@ -68,10 +75,9 @@ const handleAnswerChange = (playerAnswer: number) => {
 }
 
 const onSubmit = handleSubmit((values) => {
+  // console.log('values', values)
   emits('nextStep', values)
 })
-
-const { value: playerAnswer } = useField<FormQuestionModel['playerAnswer']>('playerAnswer')
 </script>
 
 <style scoped lang="scss">

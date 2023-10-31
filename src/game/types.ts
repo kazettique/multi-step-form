@@ -4,12 +4,14 @@ export enum Party {
   DPP = 'DPP',
   KMT = 'KMT',
   TPP = 'TPP',
-  GTM = 'GTM',
+  GTM = 'GTM'
   // KMT_TPP_COMBI = 'KMT_TPP_COMBI',
   // TPP_KMT_COMBI = 'TPP_KMT_COMBI'
 }
 
 export type PartyType = `${Party}`
+
+export type QuestionType = PartyType | 'COMMON'
 
 export interface QuestionBase {
   questionId: number
@@ -47,4 +49,5 @@ export interface QuestionItem {
     title: string
   }[]
   title: string
+  type: QuestionType
 }
